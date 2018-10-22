@@ -1,3 +1,5 @@
+require 'rexml/document'
+
 module Jekyll
   module Favicon
     module Resource
