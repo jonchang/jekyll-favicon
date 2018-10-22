@@ -25,7 +25,7 @@ module Jekyll
         mtimes[[path, @target]] ||= mtime
         source_has_been_modified = mtimes[[path, @target]] != mtime
         target_is_older_than_source = File.stat(dest_path).mtime.to_i < mtime
-        source_has_been_modified && target_is_older_than_source
+        source_has_been_modified || target_is_older_than_source
       end
 
       def write(dest)
