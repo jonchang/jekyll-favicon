@@ -3,8 +3,9 @@ module Jekyll
     module Resource
       # Creates graphic assets
       module Graphic
-        class UnsupportedFormat < StandardError; end
         class UnsupportedCopy < StandardError; end
+        class UnsupportedSourceFormat < StandardError; end
+        class UnsupportedTargetFormat < StandardError; end
 
         def self.copy(source, target, options = {})
           if target.svg?
@@ -20,7 +21,7 @@ module Jekyll
           case File.extname path
           when '.svg' then Jekyll::Favicon.config['svg']
           when '.png' then Jekyll::Favicon.config['png']
-          else raise UnsupportedFormat
+          else raise UnsupportedSourceFormat
           end
         end
 
@@ -29,7 +30,7 @@ module Jekyll
           when '.svg' then {}
           when '.ico' then ico_options Jekyll::Favicon.config['ico']
           when '.png' then png_options(path)
-          else raise UnsupportedFormat
+          else raise UnsupportedTargetFormat
           end
         end
 

@@ -46,8 +46,8 @@ module Jekyll
         File.utime icon_mtime, icon_mtime, dest_path
       rescue Graphic::UnsupportedCopy
         Jekyll.logger.debug "Jekyll::Favicon Can't create #{target}: " \
-                           'copy not supported supported.'
-      rescue Graphic::UnsupportedFormat
+                           "copy from #{path} not supported supported."
+      rescue Graphic::UnsupportedSourceFormat, Graphic::UnsupportedTargetFormat
         Jekyll.logger.warn "Jekyll::Favicon Can't create #{target}: " \
                            'extension not supported supported.'
       end
