@@ -22,5 +22,13 @@ module Jekyll
     def self.templates
       File.join PROJECT_ROOT, 'templates'
     end
+
+    def self.exclude
+      files = []
+      files << config['source']
+      files << config['chrome']['manifest']['source']
+      files << config['ie']['browserconfig']['source']
+      files
+    end
   end
 end

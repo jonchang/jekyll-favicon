@@ -43,7 +43,6 @@ favicon:
       - 144x144
   svg:
     density: 2000
-    dimensions: 1024x1024
   png:
     dimensions: 558x558
   ico:

@@ -2,72 +2,54 @@ module Jekyll
   module Favicon
     # Extended static file that generates multpiple favicons
     class Icon < Jekyll::StaticFile
-      attr_accessor :replica
       attr_accessor :target
 
-      def initialize(site, source, replica, target, collection = nil)
+      def initialize(site, source, target, collection = nil)
         @site = site
         @base = @site.source
         @dir  = File.dirname source
         @name = File.basename source
-        @replica = replica
-        @target = target
         @collection = collection
         @relative_path = File.join(*[@dir, @name].compact)
-        @extname = File.extname(target)
-        @data = { 'name' => File.basename(target), 'layout' => nil }
+        @extname = File.extname @name
+        @data = { 'name' => @name, 'layout' => nil }
+        @target = target
       end
 
       def destination(dest)
-        basename = File.basename(@target)
-        @site.in_dest_dir(*[dest, destination_rel_dir, basename].compact)
+        @site.in_dest_dir(*[dest, @target].compact)
       end
 
-      def destination_rel_dir
-        File.dirname @target
+      def modified?(dest_path)
+        mtimes = self.class.mtimes
+        mtimes[[path, @target]] ||= mtime
+        source_has_been_modified = mtimes[[path, @target]] != mtime
+        target_is_older_than_source = File.stat(dest_path).mtime.to_i < mtime
+        source_has_been_modified && target_is_older_than_source
+      end
+
+      def write(dest)
+        dest_path = destination dest
+        return false if File.exist?(dest_path) && !modified?(dest_path)
+        self.class.mtimes[[path, @target]] = mtime
+        FileUtils.mkdir_p File.dirname dest_path
+        FileUtils.rm dest_path if File.exist? dest_path
+        copy_file dest_path
+        true
       end
 
       private
 
       def copy_file(dest_path)
-        case @extname
-        when '.svg' then FileUtils.cp @replica, dest_path
-        when '.ico' then Image.convert @replica, dest_path, ico_options
-        when '.png' then Image.convert @replica, dest_path, png_options
-        else Jekyll.logger.warn "Jekyll::Favicon: Can't generate" \
-                             " #{dest_path}, extension not supported supported."
-        end
-      end
-
-      def dimensions
-        basename = File.basename(@target)
-        basename[/favicon-(\d+x\d+).png/, 1].split('x').collect(&:to_i)
-      end
-
-      def png_options
-        options = {}
-        w, h = dimensions
-        options[:background] = background_for dimensions
-        options[:odd] = w != h
-        options[:resize] = dimensions.join('x')
-        options
-      end
-
-      def ico_options
-        options = {}
-        sizes = Favicon.config['ico']['sizes']
-        options[:background] = background_for sizes.first
-        options[:alpha] = 'off'
-        options[:resize] = sizes.first
-        ico_sizes = sizes.collect { |size| size.split('x').first }.join ','
-        options[:define] = "icon:auto-resize=#{ico_sizes}"
-        options
-      end
-
-      def background_for(size)
-        category = Favicon.config['apple-touch-icon']
-        return category['background'] if category['sizes'].include? size
-        Favicon.config['background']
+        Resource::Graphic.copy path, dest_path
+        icon_mtime = self.class.mtimes[[path, @target]]
+        File.utime icon_mtime, icon_mtime, dest_path
+      rescue Graphic::UnsupportedCopy
+        Jekyll.logger.debug "Jekyll::Favicon Can't create #{target}: " \
+                           'copy not supported supported.'
+      rescue Graphic::UnsupportedFormat
+        Jekyll.logger.warn "Jekyll::Favicon Can't create #{target}: " \
+                           'extension not supported supported.'
       end
     end
   end
