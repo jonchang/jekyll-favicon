@@ -19,8 +19,8 @@ module Jekyll
 
         def self.source_options(path)
           case File.extname path
-          when '.svg' then Jekyll::Favicon.config['svg']
-          when '.png' then Jekyll::Favicon.config['png']
+          when '.svg' then Favicon.config['svg']
+          when '.png' then Favicon.config['png']
           else raise UnsupportedSourceFormat
           end
         end
@@ -28,7 +28,7 @@ module Jekyll
         def self.target_options(path)
           case File.extname path
           when '.svg' then {}
-          when '.ico' then ico_options Jekyll::Favicon.config['ico']
+          when '.ico' then ico_options Favicon.config['ico']
           when '.png' then png_options(path)
           else raise UnsupportedTargetFormat
           end
@@ -57,9 +57,9 @@ module Jekyll
         end
 
         def self.background_for(size)
-          category = Jekyll::Favicon.config['apple-touch-icon']
+          category = Favicon.config['apple-touch-icon']
           return category['background'] if category['sizes'].include? size
-          Jekyll::Favicon.config['background']
+          Favicon.config['background']
         end
 
         def self.convert(source, output, options = {})
@@ -80,7 +80,7 @@ module Jekyll
         def self.basic_options(convert, options)
           convert.background options[:background] if options[:background]
           convert.define options[:define] if options[:define]
-          convert.density options[:density] if options[:density]
+          convert.density options['density'] if options['density']
           convert.alpha options[:alpha] if options[:alpha]
         end
 
