@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.2.5] - 2019-01-16
+### Changed
+- Strike GraphicsMagick at Readme because it's compatible a this moment
+### Fixed
+- Skip safari pinned tab when source is not a SVG
+
 ## [0.2.4] - 2018-10-05
 ### Fixed
 - Path for favicon.ico in classic template
