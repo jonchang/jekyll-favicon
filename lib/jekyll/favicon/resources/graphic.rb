@@ -7,59 +7,53 @@ module Jekyll
         class UnsupportedSourceFormat < StandardError; end
         class UnsupportedTargetFormat < StandardError; end
 
-        def self.copy(source, target, options = {})
+        def self.copy(source, target, icon_config = {})
           if target.svg?
             raise UnsupportedCopy unless source.svg?
             return FileUtils.cp source, target if source.svg?
           end
-          options.merge! source_options source
-          options.merge! target_options target
+          options = {}
+          options.merge! source_options icon_config
+          options.merge! target_options icon_config
           convert source, target, options
         end
 
-        def self.source_options(path)
-          case File.extname path
-          when '.svg' then Favicon.config['svg']
-          when '.png' then Favicon.config['png']
+        def self.source_options(icon_config)
+          case File.extname icon_config['source']
+          when '.svg' then icon_config['svg'] || {}
+          when '.png' then icon_config['png'] || {}
           else raise UnsupportedSourceFormat
           end
         end
 
-        def self.target_options(path)
-          case File.extname path
+        def self.target_options(icon_config)
+          case File.extname icon_config['target']
           when '.svg' then {}
-          when '.ico' then ico_options Favicon.config['ico']
-          when '.png' then png_options(path)
+          when '.ico' then ico_options icon_config
+          when '.png' then png_options icon_config
           else raise UnsupportedTargetFormat
           end
         end
 
         def self.ico_options(config)
           options = {}
-          sizes = config['sizes']
-          options[:background] = background_for sizes.first
-          options[:alpha] = 'off'
-          options[:resize] = sizes.first
-          ico_sizes = sizes.collect { |size| size.split('x').first }.join ','
+          options[:background] = config['background']
+          options[:alpha] = config['alpha']
+          options[:resize] = config['sizes'].first
+          ico_sizes = config['sizes'].collect do |size|
+            size.split('x').first
+          end.join ','
           options[:define] = "icon:auto-resize=#{ico_sizes}"
           options
         end
 
-        def self.png_options(path)
+        def self.png_options(config)
           options = {}
-          basename = File.basename path
-          w, h = basename[/favicon-(\d+x\d+).png/, 1].split('x').collect(&:to_i)
-          size = "#{w}x#{h}"
-          options[:background] = background_for size
+          options[:background] = config['background']
+          w, h = config['size'].split('x').collect(&:to_i)
           options[:odd] = w != h
-          options[:resize] = size
+          options[:resize] = config['size']
           options
-        end
-
-        def self.background_for(size)
-          category = Favicon.config['apple-touch-icon']
-          return category['background'] if category['sizes'].include? size
-          Favicon.config['background']
         end
 
         def self.convert(source, output, options = {})

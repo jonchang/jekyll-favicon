@@ -44,23 +44,26 @@ describe Jekyll::Favicon::Generator do
     end
 
     it 'should create PNG favicons' do
-      generated_files = Dir.glob File.join(@destination, '**', '*.png')
-      options = ['classic', 'ie', 'chrome', 'apple-touch-icon']
-      sizes = options.collect { |option| option['sizes'] }.compact.uniq
-      sizes.each do |size|
-        icon = File.join @destination, @defaults['path'], "favicon-#{size}.png"
-        assert_includes generated_files, icon
+      existing_png_paths = Dir.glob File.join(@destination, '**', '*.png')
+      refute existing_png_paths.empty?
+      png_targets = Jekyll::Favicon.targets.select do |target|
+        target['target'].png?
+      end
+      png_targets.each do |png_target|
+        png_path = File.join @destination, png_target['path'],
+                             png_target['target']
+        assert_includes existing_png_paths, png_path
       end
     end
 
     it 'should create a webmanifest' do
       assert File.exist? File.join @destination,
-                                   @defaults['chrome']['manifest']['target']
+                                   @defaults['webmanifest']['target']
     end
 
     it 'should create a browserconfig' do
       assert File.exist? File.join @destination,
-                                   @defaults['ie']['browserconfig']['target']
+                                   @defaults['browserconfig']['target']
     end
   end
 
@@ -90,12 +93,12 @@ describe Jekyll::Favicon::Generator do
 
     it 'should create a webmanifest' do
       assert File.exist? File.join @destination,
-                                   @defaults['chrome']['manifest']['target']
+                                   @defaults['webmanifest']['target']
     end
 
     it 'should create a browserconfig' do
       assert File.exist? File.join @destination,
-                                   @defaults['ie']['browserconfig']['target']
+                                   @defaults['browserconfig']['target']
     end
   end
 
@@ -108,7 +111,7 @@ describe Jekyll::Favicon::Generator do
       @destination = @options['destination']
       @defaults = Jekyll::Favicon::DEFAULTS
       webmanifest_path = File.join @destination,
-                                   @defaults['chrome']['manifest']['target']
+                                   @defaults['webmanifest']['target']
       webmanifest_content = File.read webmanifest_path
       @webmanifest = JSON.parse webmanifest_content
     end
@@ -131,8 +134,8 @@ describe Jekyll::Favicon::Generator do
       @custom_config = YAML.load_file File.join @options['source'],
                                                 '_config.yml'
       @custom_favicon_config = @custom_config['favicon']
-      @webmanifest_config = @custom_favicon_config['chrome']['manifest']
-      @browserconfig_config = @custom_favicon_config['ie']['browserconfig']
+      @webmanifest_config = @custom_favicon_config['webmanifest']
+      @browserconfig_config = @custom_favicon_config['browserconfig']
     end
 
     it 'should exists only one manifest' do

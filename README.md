@@ -70,6 +70,10 @@ To get the links and meta, just add the favicon tag `{{ favicon }}`. For example
 </html>
 ```
 
+## Favicons
+
+https://developers.google.com/web/fundamentals/web-app-manifest/#icons
+
 ## Development
 
 If you want to add something, just make a PR. There is a lot to do:

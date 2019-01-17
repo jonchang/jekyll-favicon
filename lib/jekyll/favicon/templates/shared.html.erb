@@ -1,0 +1,10 @@
+<!-- Shared -->
+<%- icons = Favicon.targets.select{|icon| icon['group'] == 'shared'} -%>
+<%- ico_config = icons.select{|icon| icon['target'].ico?}.first -%>
+<%- favicon_ico_path = File.join prepend_path, ico_config['path'], ico_config['target'] -%>
+<link rel="shortcut icon" href="<%= favicon_ico_path %>">
+<link rel="icon" sizes="<%= ico_config['sizes'].join ' ' %>" href="<%= favicon_ico_path %>">
+<%- icons.select{|icon| icon['target'].png?}.each do |icon| -%>
+  <%- favicon_path = File.join prepend_path, icon['path'] -%>
+  <link rel="icon" sizes="<%= icon['size'] %>" type="image/png" href="<%= File.join favicon_path, icon['target'] %>">
+<%- end -%>

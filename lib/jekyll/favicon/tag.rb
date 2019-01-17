@@ -12,7 +12,7 @@ module Jekyll
         prepend_path = site.baseurl || ''
         templates_dir = Favicon.templates
         head = "<!-- Begin Jekyll Favicon tag v#{Favicon::VERSION} -->"
-        body = %w[classic safari chrome ie].collect do |template|
+        body = %w[shared chrome safari ie].collect do |template|
           template_path = File.join templates_dir, "#{template}.html.erb"
           ERB.new(File.read(template_path), nil, '-').result(binding).strip
         end

@@ -25,14 +25,15 @@ describe Jekyll::Favicon::Tag do
     end
 
     it 'should generate ico link' do
-      ico_config = Jekyll::Favicon.config['ico']
-      ico_path = File.join @site_baseurl, ico_config['target']
+      ico_target = Jekyll::Favicon.config['icons']['shared']['targets']
+                                  .first['target']
+      ico_path = File.join @site_baseurl, ico_target
       css_selector = 'link[href="' + ico_path + '"]'
       assert @index_document.at_css(css_selector)
     end
 
     it 'should generate webmanifest link' do
-      webmanifest_config = Jekyll::Favicon.config['chrome']['manifest']
+      webmanifest_config = Jekyll::Favicon.config['webmanifest']
       webmanifest_path = File.join File.join @site_baseurl,
                                              webmanifest_config['target']
       css_selector = 'link[href="' + webmanifest_path + '"]'
@@ -40,7 +41,7 @@ describe Jekyll::Favicon::Tag do
     end
 
     it 'should generate browserconfig link' do
-      browserconfig_config = Jekyll::Favicon.config['ie']['browserconfig']
+      browserconfig_config = Jekyll::Favicon.config['browserconfig']
       browserconfig_path = File.join File.join @site_baseurl,
                                                browserconfig_config['target']
       css_selector = 'meta[content="' + browserconfig_path + '"]'

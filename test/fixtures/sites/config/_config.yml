@@ -1,6 +1,8 @@
 favicon:
   source: custom-favicon.png
+  background: black
   path: assets/img
-  background: white
-  sizes:
-    - 1x1
+  icons:
+    shared:
+      targets:
+        - favicon-1x1.png

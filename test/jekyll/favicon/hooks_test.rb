@@ -13,8 +13,9 @@ describe 'Setup Favicon configuration configuration with hooks' do
     assert @favicon_site_config['source'], @custom['source']
     assert @favicon_site_config['path'], @custom['path']
     assert @favicon_site_config['background'], @custom['background']
-    assert @favicon_site_config['sizes'].size == 1
-    assert_includes @favicon_site_config['sizes'], @custom['sizes'].first
+    targets = @favicon_site_config['icons']['shared']['targets']
+    assert targets.size == 1
+    assert_includes targets, @custom['icons']['shared']['targets'].first
     assert_includes @site.config['exclude'], @custom['source']
   end
 end

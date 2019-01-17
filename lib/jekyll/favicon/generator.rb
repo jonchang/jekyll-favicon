@@ -22,27 +22,16 @@ module Jekyll
       end
 
       def generate_icons
-        @site.static_files.push ico_icon
-        @site.static_files.push(*png_icons)
-      end
-
-      def ico_icon
-        target = Favicon.config['ico']['target']
-        Icon.new @site, Favicon.config['source'], target
-      end
-
-      def png_icons
-        Favicon.config.deep_find('sizes').uniq.collect do |size|
-          target = File.join Favicon.config['path'], "favicon-#{size}.png"
-          Icon.new @site, Favicon.config['source'], target
+        Favicon.targets.each do |icon|
+          @site.static_files.push Icon.new @site, icon
         end
       end
 
       def generate_metadata
         @site.pages.push metadata Resource::Browserconfig.new,
-                                  Favicon.config['ie']['browserconfig']
+                                  Favicon.config['browserconfig']
         @site.pages.push metadata Resource::Webmanifest.new,
-                                  Favicon.config['chrome']['manifest']
+                                  Favicon.config['webmanifest']
       end
 
       def metadata(document, config)

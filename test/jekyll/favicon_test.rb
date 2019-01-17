@@ -6,17 +6,22 @@ describe Jekyll::Favicon do
   end
 
   it 'should have a config paramenter' do
-    refute_empty Jekyll::Favicon.config
-    refute_empty Jekyll::Favicon.config['source']
-    refute_empty Jekyll::Favicon.config['path']
-    refute_empty Jekyll::Favicon.config['classic']
-    refute_empty Jekyll::Favicon.config['classic']['sizes']
-    refute_empty Jekyll::Favicon.config['apple-touch-icon']
-    refute_empty Jekyll::Favicon.config['apple-touch-icon']['background']
-    refute_empty Jekyll::Favicon.config['apple-touch-icon']['sizes']
-    refute_empty Jekyll::Favicon.config['ie']
-    refute_empty Jekyll::Favicon.config['ie']['sizes']
-    refute_empty Jekyll::Favicon.config['chrome']
-    refute_empty Jekyll::Favicon.config['chrome']['sizes']
+    config = Jekyll::Favicon.config
+    refute_empty config
+    refute_empty config['source']
+    refute_empty config['background']
+    refute_empty config['path']
+    refute_empty config['svg']
+    refute_empty config['icons']
+    refute_empty config['icons']['shared']
+    refute_empty config['icons']['shared']['targets']
+    refute_empty config['icons']['safari']
+    refute_empty config['icons']['safari']['targets']
+    refute_empty config['icons']['chrome']
+    refute_empty config['icons']['chrome']['targets']
+    refute_empty config['icons']['ie']
+    refute_empty config['icons']['ie']['targets']
+    refute_empty config['browserconfig']
+    refute_empty config['webmanifest']
   end
 end
